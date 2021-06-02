@@ -8,9 +8,9 @@ MAIN_DIR = (os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(1, os.path.join(MAIN_DIR, 'includes'))
 
 """
-테이블에 모든 플레이어의 카드를 플로팅함
+테이블에 1p 플레이어의 카드를 플로팅함
 """
-def plot_players_hands(screen,
+def plot_players_1p_hands(screen,
                        player_pos_start,
                        player_hands_1p, 
                        double_downs, 
@@ -19,6 +19,55 @@ def plot_players_hands(screen,
     player_x_pos, player_y_pos = player_pos_start
     image_db = ImageDB.get_instance()
     for index_x, hand in enumerate(player_hands_1p):
+        for index_y, card in enumerate(hand):
+
+            image = BlackJackCardFormatter.get_instance(IMAGE_PATH_CARDS).get_string(card)
+
+            if index_y == 2 and len(hand) == 3 and double_downs[index_x]:
+                screen.blit(pygame.transform.rotate(image_db.get_image(image), 90),
+                (player_x_pos, player_y_pos))
+            else:
+                screen.blit(image_db.get_image(image), (player_x_pos, player_y_pos))
+            player_x_pos += GAP_BETWEEN_CARDS
+            player_y_pos -= 14
+        
+        x_offset = -50
+        y_offset = -40
+        if index_x == 0:
+            hand = 'first_hand_'
+        else:
+            hand = 'second_hand_'
+        
+        if hands_status[hand + 'blackjack']:
+            screen.blit(image_db.get_image(IMAGE_PATH + 'blackjack.png'),
+            (player_x_pos + x_offset, player_y_pos + y_offset))
+        elif hands_status[hand + 'win']:
+            screen.blit(image_db.get_image(IMAGE_PATH + 'you_win.png'),
+            (player_x_pos + x_offset, player_y_pos + y_offset))
+        elif hands_status[hand + 'push']:
+            screen.blit(image_db.get_image(IMAGE_PATH + 'push.png'),
+            (player_x_pos + x_offset, player_y_pos + y_offset))
+        elif hands_status[hand + 'loose']:
+            screen.blit(image_db.get_image(IMAGE_PATH + 'you_loose.png'),
+            (player_x_pos + x_offset, player_y_pos + y_offset))
+        elif hands_status[hand + 'busted']:
+            screen.blit(image_db.get_image(IMAGE_PATH + 'busted.png'),
+            (player_x_pos + x_offset, player_y_pos + y_offset))
+        player_x_pos, player_y_pos = player_pos_start
+        player_x_pos += GAP_BETWEEN_SPLIT
+
+"""
+테이블에 2p 플레이어의 카드를 플로팅함
+"""
+def plot_players_2p_hands(screen,
+                       player_pos_start,
+                       player_hands_2p, 
+                       double_downs, 
+                       hands_status):
+
+    player_x_pos, player_y_pos = player_pos_start
+    image_db = ImageDB.get_instance()
+    for index_x, hand in enumerate(player_hands_2p):
         for index_y, card in enumerate(hand):
 
             image = BlackJackCardFormatter.get_instance(IMAGE_PATH_CARDS).get_string(card)
@@ -191,15 +240,7 @@ button_status와 On / Off에 따른 다른 이미지 배치로 클릭 가능 여
 def plot_buttons(screen, button_status):
     button_x_pos, button_y_pos = BUTTONS_START_POS
     image_db = ImageDB.get_instance()
-    if button_status.play is True:
-        screen.blit(image_db.get_image(IMAGE_PATH_BUTTONS + PLAY_BUTTON_FILENAME_ON),
-        (button_x_pos, button_y_pos))
-    else:
-        screen.blit(image_db.get_image(IMAGE_PATH_BUTTONS + PLAY_BUTTON_FILENAME_OFF),
-        (button_x_pos, button_y_pos))
-    button_x_pos += GAP_BETWEEN_BUTTONS
-    
-    if button_status.undo_bet is True:
+    if button_status.undo_bet_1p is True:
         screen.blit(image_db.get_image(IMAGE_PATH_BUTTONS + UNDO_BET_BUTTON_FILENAME_ON),
                     (button_x_pos, button_y_pos))
     else:
@@ -207,48 +248,74 @@ def plot_buttons(screen, button_status):
                     (button_x_pos, button_y_pos))
     button_x_pos += GAP_BETWEEN_BUTTONS
 
-    if button_status.hit is True:
-        screen.blit(image_db.get_image(IMAGE_PATH_BUTTONS + HIT_BUTTON_FILENAME_ON),
+    if button_status.play is True:
+        screen.blit(image_db.get_image(IMAGE_PATH_BUTTONS + PLAY_BUTTON_FILENAME_ON),
+        (button_x_pos, button_y_pos))
+    else:
+        screen.blit(image_db.get_image(IMAGE_PATH_BUTTONS + PLAY_BUTTON_FILENAME_OFF),
+        (button_x_pos, button_y_pos))
+    button_x_pos += GAP_BETWEEN_BUTTONS
+
+    if button_status.undo_bet_2p is True:
+        screen.blit(image_db.get_image(IMAGE_PATH_BUTTONS + UNDO_BET_BUTTON_FILENAME_ON),
                     (button_x_pos, button_y_pos))
     else:
-        screen.blit(image_db.get_image(IMAGE_PATH_BUTTONS + HIT_BUTTON_FILENAME_OFF),
+        screen.blit(image_db.get_image(IMAGE_PATH_BUTTONS + UNDO_BET_BUTTON_FILENAME_OFF),
                     (button_x_pos, button_y_pos))
     button_x_pos += GAP_BETWEEN_BUTTONS
 
-    if button_status.stand is True:
-        screen.blit(image_db.get_image(IMAGE_PATH_BUTTONS + STAND_BUTTON_FILENAME_ON),
-                    (button_x_pos, button_y_pos))
-    else:
-        screen.blit(image_db.get_image(IMAGE_PATH_BUTTONS + STAND_BUTTON_FILENAME_OFF),
-                    (button_x_pos, button_y_pos))
-    button_x_pos += GAP_BETWEEN_BUTTONS
+    # if button_status.hit is True:
+    #     screen.blit(image_db.get_image(IMAGE_PATH_BUTTONS + HIT_BUTTON_FILENAME_ON),
+    #                 (button_x_pos, button_y_pos))
+    # else:
+    #     screen.blit(image_db.get_image(IMAGE_PATH_BUTTONS + HIT_BUTTON_FILENAME_OFF),
+    #                 (button_x_pos, button_y_pos))
+    # button_x_pos += GAP_BETWEEN_BUTTONS
 
-    if button_status.split is True:
-        screen.blit(image_db.get_image(IMAGE_PATH_BUTTONS + SPLIT_BUTTON_FILENAME_ON),
-                    (button_x_pos, button_y_pos))
-    else:
-        screen.blit(image_db.get_image(IMAGE_PATH_BUTTONS + SPLIT_BUTTON_FILENAME_OFF),
-                    (button_x_pos, button_y_pos))
-    button_x_pos += GAP_BETWEEN_BUTTONS
+    # if button_status.stand is True:
+    #     screen.blit(image_db.get_image(IMAGE_PATH_BUTTONS + STAND_BUTTON_FILENAME_ON),
+    #                 (button_x_pos, button_y_pos))
+    # else:
+    #     screen.blit(image_db.get_image(IMAGE_PATH_BUTTONS + STAND_BUTTON_FILENAME_OFF),
+    #                 (button_x_pos, button_y_pos))
+    # button_x_pos += GAP_BETWEEN_BUTTONS
 
-    if button_status.double_down is True:
-        screen.blit(image_db.get_image(IMAGE_PATH_BUTTONS + DOUBLE_DOWN_BUTTON_FILENAME_ON),
-                    (button_x_pos, button_y_pos))
-    else:
-        screen.blit(image_db.get_image(IMAGE_PATH_BUTTONS + DOUBLE_DOWN_BUTTON_FILENAME_OFF),
-                    (button_x_pos, button_y_pos))
-    button_x_pos += GAP_BETWEEN_BUTTONS
+    # if button_status.split is True:
+    #     screen.blit(image_db.get_image(IMAGE_PATH_BUTTONS + SPLIT_BUTTON_FILENAME_ON),
+    #                 (button_x_pos, button_y_pos))
+    # else:
+    #     screen.blit(image_db.get_image(IMAGE_PATH_BUTTONS + SPLIT_BUTTON_FILENAME_OFF),
+    #                 (button_x_pos, button_y_pos))
+    # button_x_pos += GAP_BETWEEN_BUTTONS
+
+    # if button_status.double_down is True:
+    #     screen.blit(image_db.get_image(IMAGE_PATH_BUTTONS + DOUBLE_DOWN_BUTTON_FILENAME_ON),
+    #                 (button_x_pos, button_y_pos))
+    # else:
+    #     screen.blit(image_db.get_image(IMAGE_PATH_BUTTONS + DOUBLE_DOWN_BUTTON_FILENAME_OFF),
+    #                 (button_x_pos, button_y_pos))
+    # button_x_pos += GAP_BETWEEN_BUTTONS
 
 """
 결과에 따른 메시지를 띄워주기 위한 메소드
 Player is busted 24 <- 와 같은 형식
 """
-def plot_results(screen, text_font, message):
+def plot_results_1p(screen, text_font, message):
     assert isinstance(message, str)
     text_to_plot = text_font.render(message, False, GOLD_COLOR)
     x_pos, y_pos = STATUS_START_POS
     screen.blit(text_to_plot, (x_pos, y_pos + 50))
     
+"""
+결과에 따른 메시지를 띄워주기 위한 메소드
+Player is busted 24 <- 와 같은 형식
+"""
+def plot_results_2p(screen, text_font, message):
+    assert isinstance(message, str)
+    text_to_plot = text_font.render(message, False, GOLD_COLOR)
+    x_pos, y_pos = STATUS_START_POS
+    screen.blit(text_to_plot, (x_pos + 665, y_pos + 50))
+
 """
 플레이어가 가지고 있는 카드의 점수를 계산합니다.
 규칙. 
@@ -354,16 +421,19 @@ class CommenVariables:
         self.done = None
         self.screen = None
         self.shoe_of_decks = None
+        # 1p
         self.player_hands_1p = None
         self.player_deal_1p = None
         self.player_hit_1p = None
         self.player_cash_1p = None
         self.player_bets_1p = None
+        # 2p
         self.player_hands_2p = None
         self.player_deal_2p = None
         self.player_hit_2p = None
         self.player_cash_2p = None
         self.player_bets_2p = None
+        # common
         self.hands_status = None
         self.double_downs = None
         self.dealer_cards = None
@@ -389,7 +459,8 @@ class ButtonStatus:
 
     def __init__(self):
         self.play = False
-        self.undo_bet = False
+        self.undo_bet_1p = False
+        self.undo_bet_2p = False
         self.hit = False
         self.stand = False
         self.split = False
@@ -397,7 +468,8 @@ class ButtonStatus:
 
     def reset(self):
         self.play = False
-        self.undo_bet = False
+        self.undo_bet_1p = False
+        self.undo_bet_2p = False
         self.hit = False
         self.stand = False
         self.split = False
@@ -435,14 +507,6 @@ class ButtonCollideArea:
     def __init__(self, common_vars):
         button_x_pos, button_y_pos = BUTTONS_START_POS
 
-        self.play_button_area = pygame.Rect(
-            button_x_pos, 
-            button_y_pos,
-            common_vars.button_image_width, 
-            common_vars.button_image_height
-            )
-        button_x_pos += GAP_BETWEEN_BUTTONS
-
         self.undo_bet_button_area = pygame.Rect(
             button_x_pos,
             button_y_pos,
@@ -451,36 +515,44 @@ class ButtonCollideArea:
             )
         button_x_pos += GAP_BETWEEN_BUTTONS
 
-        self.hit_button_area = pygame.Rect(
-            button_x_pos,
+        self.play_button_area = pygame.Rect(
+            button_x_pos, 
             button_y_pos,
-            common_vars.button_image_width,
+            common_vars.button_image_width, 
             common_vars.button_image_height
             )
         button_x_pos += GAP_BETWEEN_BUTTONS
 
-        self.stand_button_area = pygame.Rect(
-            button_x_pos,
-            button_y_pos,
-            common_vars.button_image_width,
-            common_vars.button_image_height
-            )
-        button_x_pos += GAP_BETWEEN_BUTTONS
+        # self.hit_button_area = pygame.Rect(
+        #     button_x_pos,
+        #     button_y_pos,
+        #     common_vars.button_image_width,
+        #     common_vars.button_image_height
+        #     )
+        # button_x_pos += GAP_BETWEEN_BUTTONS
 
-        self.split_button_area = pygame.Rect(
-            button_x_pos,
-            button_y_pos,
-            common_vars.button_image_width,
-            common_vars.button_image_height
-            )
-        button_x_pos += GAP_BETWEEN_BUTTONS
+        # self.stand_button_area = pygame.Rect(
+        #     button_x_pos,
+        #     button_y_pos,
+        #     common_vars.button_image_width,
+        #     common_vars.button_image_height
+        #     )
+        # button_x_pos += GAP_BETWEEN_BUTTONS
 
-        self.double_down_button_area = pygame.Rect(
-            button_x_pos,
-            button_y_pos,
-            common_vars.button_image_width,
-            common_vars.button_image_height
-            )
+        # self.split_button_area = pygame.Rect(
+        #     button_x_pos,
+        #     button_y_pos,
+        #     common_vars.button_image_width,
+        #     common_vars.button_image_height
+        #     )
+        # button_x_pos += GAP_BETWEEN_BUTTONS
+
+        # self.double_down_button_area = pygame.Rect(
+        #     button_x_pos,
+        #     button_y_pos,
+        #     common_vars.button_image_width,
+        #     common_vars.button_image_height
+        #     )
 
 class ChipsCollideArea:
     instance = None

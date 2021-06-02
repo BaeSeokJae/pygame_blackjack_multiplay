@@ -22,8 +22,8 @@ class BlackJack(object):
     common_vars.dealer_last_hand = 0
     common_vars.player_hands_1p = []
     common_vars.player_hands_2p = []
-    common_vars.button_image_width = image_db.get_image(IMAGE_PATH_BUTTONS + HIT_BUTTON_FILENAME_ON).get_width()
-    common_vars.button_image_height = image_db.get_image(IMAGE_PATH_BUTTONS + HIT_BUTTON_FILENAME_ON).get_height()
+    common_vars.button_image_width = image_db.get_image(IMAGE_PATH_BUTTONS + PLAY_BUTTON_FILENAME_ON).get_width()
+    common_vars.button_image_height = image_db.get_image(IMAGE_PATH_BUTTONS + PLAY_BUTTON_FILENAME_ON).get_height()
     common_vars.chips_image_width = image_db.get_image(IMAGE_PATH_CHIPS + CHIP_5_FILENAME_ON).get_width()
     common_vars.chips_image_height = image_db.get_image(IMAGE_PATH_CHIPS + CHIP_5_FILENAME_ON).get_height()
 
@@ -48,6 +48,13 @@ class BlackJack(object):
             # Plot the value of the current hand
             x_pos = 100
             for hand in common_vars.player_hands_1p:
+                count = get_value_of_players_hand(hand)
+                if count:
+                    message = value_of_players_hand_font.render('{0}'.format(count), False, YELLOW_COLOR)
+                    common_vars.screen.blit(message, (x_pos, GAME_BOARD_Y_SIZE - 270))
+                x_pos += GAP_BETWEEN_SPLIT
+            x_pos = 830
+            for hand in common_vars.player_hands_2p:
                 count = get_value_of_players_hand(hand)
                 if count:
                     message = value_of_players_hand_font.render('{0}'.format(count), False, YELLOW_COLOR)
