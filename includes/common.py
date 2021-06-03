@@ -14,7 +14,7 @@ def plot_players_1p_hands(screen,
                        player_pos_start,
                        player_hands_1p, 
                        double_downs, 
-                       hands_status):
+                       hands_status_1p):
 
     player_x_pos, player_y_pos = player_pos_start
     image_db = ImageDB.get_instance()
@@ -38,19 +38,19 @@ def plot_players_1p_hands(screen,
         else:
             hand = 'second_hand_'
         
-        if hands_status[hand + 'blackjack']:
+        if hands_status_1p[hand + 'blackjack']:
             screen.blit(image_db.get_image(IMAGE_PATH + 'blackjack.png'),
             (player_x_pos + x_offset, player_y_pos + y_offset))
-        elif hands_status[hand + 'win']:
+        elif hands_status_1p[hand + 'win']:
             screen.blit(image_db.get_image(IMAGE_PATH + 'you_win.png'),
             (player_x_pos + x_offset, player_y_pos + y_offset))
-        elif hands_status[hand + 'push']:
+        elif hands_status_1p[hand + 'push']:
             screen.blit(image_db.get_image(IMAGE_PATH + 'push.png'),
             (player_x_pos + x_offset, player_y_pos + y_offset))
-        elif hands_status[hand + 'loose']:
+        elif hands_status_1p[hand + 'loose']:
             screen.blit(image_db.get_image(IMAGE_PATH + 'you_loose.png'),
             (player_x_pos + x_offset, player_y_pos + y_offset))
-        elif hands_status[hand + 'busted']:
+        elif hands_status_1p[hand + 'busted']:
             screen.blit(image_db.get_image(IMAGE_PATH + 'busted.png'),
             (player_x_pos + x_offset, player_y_pos + y_offset))
         player_x_pos, player_y_pos = player_pos_start
@@ -63,7 +63,7 @@ def plot_players_2p_hands(screen,
                        player_pos_start,
                        player_hands_2p, 
                        double_downs, 
-                       hands_status):
+                       hands_status_1p):
 
     player_x_pos, player_y_pos = player_pos_start
     image_db = ImageDB.get_instance()
@@ -87,19 +87,19 @@ def plot_players_2p_hands(screen,
         else:
             hand = 'second_hand_'
         
-        if hands_status[hand + 'blackjack']:
+        if hands_status_1p[hand + 'blackjack']:
             screen.blit(image_db.get_image(IMAGE_PATH + 'blackjack.png'),
             (player_x_pos + x_offset, player_y_pos + y_offset))
-        elif hands_status[hand + 'win']:
+        elif hands_status_1p[hand + 'win']:
             screen.blit(image_db.get_image(IMAGE_PATH + 'you_win.png'),
             (player_x_pos + x_offset, player_y_pos + y_offset))
-        elif hands_status[hand + 'push']:
+        elif hands_status_1p[hand + 'push']:
             screen.blit(image_db.get_image(IMAGE_PATH + 'push.png'),
             (player_x_pos + x_offset, player_y_pos + y_offset))
-        elif hands_status[hand + 'loose']:
+        elif hands_status_1p[hand + 'loose']:
             screen.blit(image_db.get_image(IMAGE_PATH + 'you_loose.png'),
             (player_x_pos + x_offset, player_y_pos + y_offset))
-        elif hands_status[hand + 'busted']:
+        elif hands_status_1p[hand + 'busted']:
             screen.blit(image_db.get_image(IMAGE_PATH + 'busted.png'),
             (player_x_pos + x_offset, player_y_pos + y_offset))
         player_x_pos, player_y_pos = player_pos_start
@@ -427,14 +427,16 @@ class CommenVariables:
         self.player_hit_1p = None
         self.player_cash_1p = None
         self.player_bets_1p = None
+        self.hands_status_1p_ = None
         # 2p
         self.player_hands_2p = None
         self.player_deal_2p = None
         self.player_hit_2p = None
         self.player_cash_2p = None
         self.player_bets_2p = None
+        self.hands_status_2p = None
         # common
-        self.hands_status = None
+        
         self.double_downs = None
         self.dealer_cards = None
         self.dealer_last_hand = None

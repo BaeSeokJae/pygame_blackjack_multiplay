@@ -71,3 +71,8 @@ COUNTING_HELP = True
 
 # Rank
 RANK = {}
+
+# Game Status
+HIT = "hit"
+STAND = "stand"
+DOUBLE_DOWN = "double_down"
