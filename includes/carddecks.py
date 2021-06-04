@@ -1,3 +1,9 @@
+import sys
+import os
+
+MAIN_DIR = (os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+sys.path.insert(1, os.path.join(MAIN_DIR, 'includes'))
+
 from random import shuffle
 from .playingcard import PlayingCard
 

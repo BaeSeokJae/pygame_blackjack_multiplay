@@ -1,11 +1,12 @@
 import sys
 import os
 import pygame
-from .globals import *
-from .playingcard import PlayingCard
 
 MAIN_DIR = (os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
 sys.path.insert(1, os.path.join(MAIN_DIR, 'includes'))
+
+from .globals import *
+from .playingcard import PlayingCard
 
 """
 테이블에 1p 플레이어의 카드를 플로팅함
@@ -63,7 +64,7 @@ def plot_players_2p_hands(screen,
                        player_pos_start,
                        player_hands_2p, 
                        double_downs, 
-                       hands_status_1p):
+                       hands_status_2p):
 
     player_x_pos, player_y_pos = player_pos_start
     image_db = ImageDB.get_instance()
@@ -87,19 +88,19 @@ def plot_players_2p_hands(screen,
         else:
             hand = 'second_hand_'
         
-        if hands_status_1p[hand + 'blackjack']:
+        if hands_status_2p[hand + 'blackjack']:
             screen.blit(image_db.get_image(IMAGE_PATH + 'blackjack.png'),
             (player_x_pos + x_offset, player_y_pos + y_offset))
-        elif hands_status_1p[hand + 'win']:
+        elif hands_status_2p[hand + 'win']:
             screen.blit(image_db.get_image(IMAGE_PATH + 'you_win.png'),
             (player_x_pos + x_offset, player_y_pos + y_offset))
-        elif hands_status_1p[hand + 'push']:
+        elif hands_status_2p[hand + 'push']:
             screen.blit(image_db.get_image(IMAGE_PATH + 'push.png'),
             (player_x_pos + x_offset, player_y_pos + y_offset))
-        elif hands_status_1p[hand + 'loose']:
+        elif hands_status_2p[hand + 'loose']:
             screen.blit(image_db.get_image(IMAGE_PATH + 'you_loose.png'),
             (player_x_pos + x_offset, player_y_pos + y_offset))
-        elif hands_status_1p[hand + 'busted']:
+        elif hands_status_2p[hand + 'busted']:
             screen.blit(image_db.get_image(IMAGE_PATH + 'busted.png'),
             (player_x_pos + x_offset, player_y_pos + y_offset))
         player_x_pos, player_y_pos = player_pos_start
