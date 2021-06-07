@@ -444,14 +444,14 @@ class DealingState(State):
                         self.next_state(SplitState)
                 # 1p는 이미 블랙잭인 상태이므로 2p만 게임 진행
                 elif common_vars.hands_status_1p['first_hand_blackjack'] == True:
-                    if player_1p == HIT:
+                    if player_2p == HIT:
                         # card_sound.play()
                         card = common_vars.shoe_of_decks.pop()
                         common_vars.player_hands_2p[first_hand].append(card)
                         button_status.split = False
                         button_status.double_down = False
                         self.next_state(PlayerHitState)
-                    elif player_1p == STAND:
+                    elif player_2p == STAND:
                         self.next_state(DealerInitState)
                     elif button_status.double_down:
                         common_vars.player_cash_2p -= sum(common_vars.player_bets_2p[0])
@@ -680,26 +680,26 @@ class PlayerHitState(State):
                     common_vars.hands_status_2p['second_hand_busted'] = True
                     self._current_hand = 0
                     self.next_state(DealerInitState)
-                if num_of_hands_1p == 1:
-                    print("PlayerHitState에서 1p 버스트 당하는 부분")
-                    common_vars.hands_status_1p['first_hand_busted'] = True
-                    self._current_hand = 0
-                    button_status.reset()
-                    self.next_state(InitialState)
-                elif self._current_hand == 0:
-                    common_vars.hands_status_1p['first_hand_busted'] = True
-                    button_status.double_down = True
-                    self._current_hand += 1
-                elif self._current_hand == 1 and common_vars.hands_status_1p['first_hand_busted']:
-                    common_vars.hands_status_1p['second_hand_busted'] = True
-                    self._current_hand = 0
-                    button_status.reset()
-                    self.next_state(InitialState)
-                else:
-                    common_vars.hands_status_1p['second_hand_busted'] = True
-                    self._current_hand = 0
-                    self.next_state(DealerInitState)
             elif value_of_players_2p_hand < 21:
+                self.next_state(DealerInitState)
+            if num_of_hands_1p == 1:
+                print("PlayerHitState에서 1p 버스트 당하는 부분")
+                common_vars.hands_status_1p['first_hand_busted'] = True
+                self._current_hand = 0
+                button_status.reset()
+                self.next_state(InitialState)
+            elif self._current_hand == 0:
+                common_vars.hands_status_1p['first_hand_busted'] = True
+                button_status.double_down = True
+                self._current_hand += 1
+            elif self._current_hand == 1 and common_vars.hands_status_1p['first_hand_busted']:
+                common_vars.hands_status_1p['second_hand_busted'] = True
+                self._current_hand = 0
+                button_status.reset()
+                self.next_state(InitialState)
+            else:
+                common_vars.hands_status_1p['second_hand_busted'] = True
+                self._current_hand = 0
                 self.next_state(DealerInitState)
             
         # 만약 1p는 안당하고 2p만 당했을 시
@@ -731,26 +731,26 @@ class PlayerHitState(State):
                     common_vars.hands_status_1p['second_hand_busted'] = True
                     self._current_hand = 0
                     self.next_state(DealerInitState)
-                if num_of_hands_2p == 1:
-                    common_vars.hands_status_2p['first_hand_busted'] = True
-                    self._current_hand = 0
-                    button_status.reset()
-                    self.next_state(InitialState)
-                elif self._current_hand == 0:
-                    common_vars.hands_status_2p['first_hand_busted'] = True
-                    button_status.double_down = True
-                    self._current_hand += 1
-                elif self._current_hand == 1 and common_vars.hands_status_2p['first_hand_busted']:
-                    common_vars.hands_status_2p['second_hand_busted'] = True
-                    self._current_hand = 0
-                    button_status.reset()
-                    self.next_state(InitialState)
-                else:
-                    common_vars.hands_status_2p['second_hand_busted'] = True
-                    self._current_hand = 0
-                    self.next_state(DealerInitState)
-            elif value_of_players_1p_hand < 21:
+            if num_of_hands_2p == 1:
+                common_vars.hands_status_2p['first_hand_busted'] = True
+                self._current_hand = 0
+                button_status.reset()
+                self.next_state(InitialState)
+            elif self._current_hand == 0:
+                common_vars.hands_status_2p['first_hand_busted'] = True
+                button_status.double_down = True
+                self._current_hand += 1
+            elif self._current_hand == 1 and common_vars.hands_status_2p['first_hand_busted']:
+                common_vars.hands_status_2p['second_hand_busted'] = True
+                self._current_hand = 0
+                button_status.reset()
+                self.next_state(InitialState)
+            else:
+                common_vars.hands_status_2p['second_hand_busted'] = True
+                self._current_hand = 0
                 self.next_state(DealerInitState)
+            # elif value_of_players_1p_hand < 21:
+            #     self.next_state(DealerInitState)
             
         # 1p와 2p가 21점이 딱 맞을 시
         elif value_of_players_1p_hand == 21:
@@ -1204,6 +1204,40 @@ class DealerHitState(State):
                 else:
                     common_vars.hands_status_1p['second_hand_busted'] = True
             else:
+                if value_of_player_hand_2p > 21 or 22 > value_of_dealer_hand > value_of_player_hand_2p:
+                    if value_of_player_hand_2p > 21:
+                        plot_results_2p(common_vars.screen, common_vars.text_font,
+                        'Player is busted {0}'.format(value_of_player_hand_2p))
+                        if self._current_hand == 0:
+                            common_vars.hands_status_2p['first_hand_busted'] = True
+                        else:
+                            common_vars.hands_status_2p['second_hand_busted'] = True
+                    else:
+                        plot_results_2p(common_vars.screen, common_vars.text_font,
+                        'Dealer wins with {0} over player {1}'.format(value_of_dealer_hand, value_of_player_hand_2p))
+                        if self._current_hand == 0:
+                            common_vars.hands_status_2p['first_hand_loose'] = True
+                        else:
+                            common_vars.hands_status_2p['second_hand_loose'] = True
+                elif value_of_player_hand_2p > value_of_dealer_hand:
+                    common_vars.pause_time = PAUSE_TIMER3
+                    plot_results_2p(common_vars.screen, common_vars.text_font,
+                    "Player wins with {0} over dealer {1}".format(value_of_player_hand_2p, value_of_dealer_hand))
+                    if self._current_hand == 0:
+                        common_vars.hands_status_2p['first_hand_win'] = True
+                    else:
+                        common_vars.hands_status_2p['second_hand_win'] = True
+                        common_vars.player_cash_2p += sum(common_vars.player_bets_2p.pop()) * 2
+                elif value_of_dealer_hand == value_of_player_hand_2p:
+                    # 플레이어와 딜러의 점수가 값으면 push함
+                    common_vars.pause_time = PAUSE_TIMER3
+                    plot_results_2p(common_vars.screen, common_vars.text_font,
+                    'A push dealer has {0}, player has {1}'.format(value_of_dealer_hand, value_of_player_hand_2p))
+                    if self._current_hand == 0:
+                        common_vars.hands_status_2p["first_hand_push"] = True
+                    else:
+                        common_vars.hands_status_2p['second_hand_push'] = True
+                    common_vars.player_cash_2p += sum(common_vars.player_bets_2p.pop())
                 plot_results_1p(common_vars.screen, common_vars.text_font,
                 'Dealer wins with {0} over player {1}'.format(value_of_dealer_hand, value_of_player_hand_1p))
                 if self._current_hand == 0:
