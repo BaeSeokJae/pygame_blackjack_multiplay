@@ -258,10 +258,10 @@ def plot_buttons(screen, button_status):
     button_x_pos += GAP_BETWEEN_BUTTONS
 
     if button_status.undo_bet_2p is True:
-        screen.blit(image_db.get_image(IMAGE_PATH_BUTTONS + UNDO_BET_BUTTON_FILENAME_ON),
+        screen.blit(image_db.get_image(IMAGE_PATH_BUTTONS + UNDO_BET_2P_BUTTON_FILENAME_ON),
                     (button_x_pos, button_y_pos))
     else:
-        screen.blit(image_db.get_image(IMAGE_PATH_BUTTONS + UNDO_BET_BUTTON_FILENAME_OFF),
+        screen.blit(image_db.get_image(IMAGE_PATH_BUTTONS + UNDO_BET_2P_BUTTON_FILENAME_OFF),
                     (button_x_pos, button_y_pos))
     button_x_pos += GAP_BETWEEN_BUTTONS
 
@@ -522,6 +522,14 @@ class ButtonCollideArea:
             button_x_pos, 
             button_y_pos,
             common_vars.button_image_width, 
+            common_vars.button_image_height
+            )
+        button_x_pos += GAP_BETWEEN_BUTTONS
+
+        self.undo_bet_2p_button_area = pygame.Rect(
+            button_x_pos,
+            button_y_pos,
+            common_vars.button_image_width,
             common_vars.button_image_height
             )
         button_x_pos += GAP_BETWEEN_BUTTONS

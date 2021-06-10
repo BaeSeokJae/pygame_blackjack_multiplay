@@ -22,6 +22,8 @@ DOUBLE_DOWN_BUTTON_FILENAME_ON = "doubledown_button_blue.png"
 DOUBLE_DOWN_BUTTON_FILENAME_OFF = "doubledown_button_blue_fade.png"
 UNDO_BET_BUTTON_FILENAME_ON = "undobet_button_blue.png"
 UNDO_BET_BUTTON_FILENAME_OFF = "undobet_button_blue_fade.png"
+UNDO_BET_2P_BUTTON_FILENAME_ON = "undobet_button_blue_2p.png"
+UNDO_BET_2P_BUTTON_FILENAME_OFF = "undobet_button_blue_fade_2p.png"
 
 # All chips images
 CHIP_5_FILENAME_ON = "chip_5_w85h85.png"
